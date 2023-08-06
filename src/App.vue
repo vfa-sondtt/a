@@ -6,14 +6,10 @@
 
 <script>
 import { defineComponent, watch } from "vue";
-// import { useClient, defaultPlugins, ClientPluginContext } from "villus";
-
 import { authStore } from "./stores/authStore.js";
-// import { useNotesStore } from "./stores/notes";
 
 export default defineComponent({
   name: "App",
-
   data() {
     return { storeAuth: authStore() };
   },
@@ -34,10 +30,6 @@ export default defineComponent({
     //   });
     //   opContext.headers.Authorization = "Bearer " + curentUser?.accessToken;
     // }
-    // useClient({
-    //   url: process.env.URL_API || "", // your endpoint.
-    //   use: [authPlugin, ...defaultPlugins()],
-    // });
   },
 });
 </script>

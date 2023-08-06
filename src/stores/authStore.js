@@ -1,7 +1,57 @@
 import { defineStore } from "pinia";
 import { useStorage } from "vue3-storage";
-// import { useMutation } from 'villus';
-// import { mutatioLoginUserCms } from "../pages/auth/graphql/MutationLoginUserCms";
+import { useMutation } from "villus";
+
+// thêm vô page/auth/grapql
+import { mutatioLoginUserCms } from "../pages/auth/graphql/MutationLoginUserCms";
+
+// const LikePost = `mutation {
+//   createUser($email: String!, $password: String!) {
+//     email
+//   }
+// }`;
+
+const newusser = `
+mutation createUser($email: String!, $password: String!) {
+  createUser(email: $email, password: $password) {
+    id
+    email
+  }
+}
+
+`;
+
+// const Login = `mutation login($email: String!, $password: String!) {
+//   result: login(email: $email, password: $password){
+//     statusCode
+//     message
+//     data {
+//       auth{
+//         accessToken
+//         refreshToken
+//         tokenType
+//       }
+//       user {
+//         id
+//         userName
+//       }
+//     }
+//     error
+//   }
+// }
+
+// `;
+
+const Login = `mutation login($email: String!, $password: String!) {
+  login(email: $email, password: $password){
+    userId
+    token
+    tokenExpiration
+  }
+}
+
+`;
+
 export const authStore = defineStore("authStore", {
   state: () => ({
     currentUser: { userName: "", accessToken: "", error: "" },
@@ -96,9 +146,10 @@ export const authStore = defineStore("authStore", {
       this.currentUser = { userName: "", accessToken: "", error: "logout" };
     },
     handleLoginApi() {
-      // const loginMutation = require('../pages/auth/graphql/MutationLoginUserCms.graphql');
-      //   const { data, execute } = useMutation(mutatioLoginUserCms);
-      //   return { data, execute };
+      // const { data, execute } = useMutation(mutatioLoginUserCms);
+      const { data, execute } = useMutation(Login);
+
+      return { data, execute };
     },
     addNote(note) {
       console.log("notes:", this.notes);
@@ -112,8 +163,12 @@ export const authStore = defineStore("authStore", {
     },
 
     handleFilter(value) {
-      // console.log(this.filter);
       this.filter = value;
+    },
+    create() {
+      const { data, execute } = useMutation(newusser);
+
+      return { data, execute };
     },
 
     // for example only

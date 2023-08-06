@@ -82,6 +82,8 @@
 </template>
 
 <script>
+import { authStore } from "../stores/authStore";
+
 export default {
   data() {
     return {
@@ -93,17 +95,65 @@ export default {
       visibilityIcon: "visibility",
     };
   },
+  setup() {
+    const store = authStore();
+    const { execute, data } = store.handleLoginApi();
+
+    // const { execute, data } = store.create();
+
+    return { execute, store, data };
+  },
   methods: {
     required(val) {
       return (val && val.length > 0) || "Require";
     },
     // handle Submit Login
-    submit() {
+    async submit() {
       this.$refs.email.validate();
       this.$refs.password.validate();
+      console.log("run");
 
-      localStorage.setItem("accessToken", this.email + this.password);
-      this.$router.push({ name: "Note" });
+      // localStorage.setItem("accessToken", this.email + this.password);
+      // this.$router.push({ name: "Note" });
+
+      // this.execute({ email: this.email, password: this.password });
+
+      try {
+        const result = await this.execute({
+          email: this.email,
+          password: this.password,
+        });
+
+        console.log("ten: ", result);
+
+        if (result.error) {
+          console.log("error  ", result.error.message);
+          this.$q.notify({
+            message: result.error.message,
+            type: "negative",
+            timeout: 1000000,
+          });
+        } else {
+          console.log("result-> ", this.data.result.data);
+          this.store.setUserInfomation(this.data.result.data);
+          this.$router.push("/testcode");
+        }
+      } catch (error) {
+        this.loading = false;
+        console.log("system error-> ", error);
+      }
+
+      // try {
+      //   // Gửi yêu cầu mutation với giá trị username và password từ input
+      //   await mutate({
+      //     variables: {
+      //       username: username.value,
+      //       password: password.value,
+      //     },
+      //   });
+      // } catch (error) {
+      //   console.error(error);
+      // }
 
       //   if (!this.$refs.email.hasError && !this.$refs.password.hasError) {
       //     this.$q.notify({
@@ -113,7 +163,6 @@ export default {
       //     });
       //   }
     },
-    switchTypeForm() {},
     switchVisibility() {
       this.visibility = !this.visibility;
       this.passwordFieldType = this.visibility ? "text" : "password";
@@ -127,6 +176,42 @@ export default {
     },
     next() {
       this.$refs.password.focus();
+    },
+    // login
+    async handleLoginApi() {
+      const variables = {
+        LoginDto: {
+          loginId: this.email,
+          password: this.password,
+        },
+      };
+      try {
+        const result = await this.execute(variables);
+        if (result.error) {
+          console.log("error  ", result.error.message);
+          this.$q.notify({
+            message: result.error.message,
+            type: "negative",
+            timeout: 1000000,
+          });
+        } else {
+          console.log("result-> ", this.data.result.data);
+          this.store.setUserInfomation(this.data.result.data);
+          this.$router.push("/testcode");
+        }
+      } catch (error) {
+        this.loading = false;
+        console.log("system error-> ", error);
+      }
+    },
+
+    short(val) {
+      // return (val && val.length > 3) || "Value is too short";
+    },
+    isEmail(val) {
+      // const emailPattern =
+      //   /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
+      // return emailPattern.test(val) || "Please enter a valid email";
     },
   },
 };

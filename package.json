@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.5",
+    "graphql": "^16.6.0",
     "pinia": "^2.1.6",
     "quasar": "^2.12.3",
+    "villus": "^1.1.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4",
     "vue3-storage": "^0.1.11"
