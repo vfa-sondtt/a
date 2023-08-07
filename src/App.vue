@@ -7,6 +7,7 @@
 <script>
 import { defineComponent, watch } from "vue";
 import { authStore } from "./stores/authStore.js";
+import { useClient, defaultPlugins } from "villus";
 
 export default defineComponent({
   name: "App",
@@ -30,6 +31,27 @@ export default defineComponent({
     //   });
     //   opContext.headers.Authorization = "Bearer " + curentUser?.accessToken;
     // }
+
+    const store = authStore();
+    const curentUser = store.getCurrentUser;
+    console.log("log1", "Bearer " + curentUser?.accessToken);
+
+    function authPlugin({ afterQuery, opContext }) {
+      afterQuery((result, { response }) => {
+        if (response?.status === 403) {
+          // call API to refresh token with either client.executeMutaiton or execute from the useMutation then update token
+          console.log("in debug case ", result, response);
+          storeAuth.logout();
+        }
+      });
+
+      opContext.headers.Authorization = "Bearer " + curentUser?.accessToken;
+    }
+
+    useClient({
+      url: "http://localhost:3000/graphql", // your endpoint.
+      use: [authPlugin, ...defaultPlugins()],
+    });
   },
 });
 </script>

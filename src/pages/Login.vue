@@ -104,6 +104,7 @@ export default {
     required(val) {
       return (val && val.length > 0) || "Require";
     },
+
     // handle Submit Login
     async submit() {
       this.$refs.email.validate();
@@ -126,12 +127,10 @@ export default {
             timeout: 1000000,
           });
         } else {
-          console.log("result-> ", this.data.result);
-          this.store.setUserInfomation(this.data.result);
+          console.log("result-> ", this.data.login);
+          this.store.setUserInfomation(this.data.login);
 
           this.$router.push({ name: "Note" });
-
-          // this.$router.push("/");
         }
       } catch (error) {
         // this.loading = false;
@@ -153,44 +152,44 @@ export default {
       this.$refs.password.focus();
     },
     // login
-    async handleLoginApi() {
-      const variables = {
-        LoginDto: {
-          loginId: this.email,
-          password: this.password,
-        },
-      };
-      try {
-        const result = await this.execute(variables);
-        if (result.error) {
-          console.log("error  ", result.error.message);
-          this.$q.notify({
-            progress: true,
-            message: result.error.message,
-            type: "negative",
-            timeout: 1000,
-          });
-        } else {
-          console.log("result-> ", this.data);
+    // async handleLoginApi() {
+    //   const variables = {
+    //     LoginDto: {
+    //       loginId: this.email,
+    //       password: this.password,
+    //     },
+    //   };
+    //   try {
+    //     const result = await this.execute(variables);
+    //     if (result.error) {
+    //       console.log("error  ", result.error.message);
+    //       this.$q.notify({
+    //         progress: true,
+    //         message: result.error.message,
+    //         type: "negative",
+    //         timeout: 1000,
+    //       });
+    //     } else {
+    //       console.log("result-> ", this.data);
 
-          // this.store.setUserInfomation(this.data.result.data);
-          this.$router.push({ name: "Note" });
+    //       // this.store.setUserInfomation(this.data.result.data);
+    //       this.$router.push({ name: "Note" });
 
-          // this.$router.push("/");
-        }
-      } catch (error) {
-        // this.loading = false;
-        console.log("system error-> ", error);
-      }
-    },
+    //       // this.$router.push("/");
+    //     }
+    //   } catch (error) {
+    //     // this.loading = false;
+    //     console.log("system error-> ", error);
+    //   }
+    // },
 
     short(val) {
-      // return (val && val.length > 3) || "Value is too short";
+      return (val && val.length > 3) || "Value is too short";
     },
     isEmail(val) {
-      // const emailPattern =
-      //   /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
-      // return emailPattern.test(val) || "Please enter a valid email";
+      const emailPattern =
+        /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
+      return emailPattern.test(val) || "Please enter a valid email";
     },
   },
 };

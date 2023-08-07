@@ -57,7 +57,7 @@
           v-model="password"
           :type="passwordFieldType"
           lazy-rules
-          :rules="[this.required, this.short]"
+          :rules="[this.required, this.short, this.validateRegex]"
           label="Password"
         >
           <template v-slot:prepend>
@@ -105,13 +105,15 @@
         color="secondary"
         @click="submit"
         class="full-width text-white"
-        label="Submit"
+        label="SignUp"
       />
     </q-card-actions>
   </q-card>
 </template>
 
 <script>
+import { authStore } from "../stores/authStore";
+
 export default {
   data() {
     return {
@@ -120,23 +122,41 @@ export default {
       username: "",
       password: "",
       repassword: "",
-      register: false,
       passwordFieldType: "password",
       btnLabel: "Login",
       visibility: false,
       visibilityIcon: "visibility",
     };
   },
+  setup() {
+    const store = authStore();
+    const { execute, data } = store.SignUp();
+    return { execute, data };
+  },
   methods: {
     required(val) {
       return (val && val.length > 0) || "Require";
     },
-    diffPassword(val) {
-      const val2 = this.$refs.password.value;
-      return (val && val === val2) || "Password doesn't match!";
+    diffPassword() {
+      const condition = this.password == this.repassword;
+      return condition || "Password doesn't match!";
     },
     short(val) {
-      return (val && val.length > 3) || "Value is too short";
+      return (val && val.length > 5) || "Value is too short";
+    },
+    validateRegex(val) {
+      const uppercaseRegex = /[A-Z]/;
+      const specialCharacterRegex = /[!@#$%^&*()_+[\]{};':"\\|,.<>?]/;
+      const lowercaseRegex = /[a-z]/;
+
+      // Kiểm tra xem password có ít nhất một chữ hoa và một kí tự đặc biệt hay không
+      const hasUppercase = uppercaseRegex.test(this.password);
+      const hasLowercase = lowercaseRegex.test(this.password);
+      const hasSpecialCharacter = specialCharacterRegex.test(this.password);
+      return (
+        (hasUppercase && hasSpecialCharacter) ||
+        "Phai bao gom chu hoa và 1 kí tự đặc biệt"
+      );
     },
     isEmail(val) {
       const emailPattern =
@@ -144,20 +164,57 @@ export default {
       return emailPattern.test(val) || "Please enter a valid email";
     },
     // handle Submit
-    submit() {
-      this.$refs.email.validate();
-      this.$refs.username.validate();
-      this.$refs.password.validate();
-      this.$refs.repassword.validate();
+    async submit() {
+      // this.$refs.email.validate();
+      // this.$refs.username.validate();
+      // this.$refs.password.validate();
+      // this.$refs.repassword.validate();
 
-      if (!this.register)
-        if (!this.$refs.email.hasError && !this.$refs.password.hasError) {
+      try {
+        const result = await this.execute({
+          name: this.username,
+          email: this.email,
+          password: this.password,
+        });
+
+        //         {
+        // "name": "son",
+        // "email": "ab3c312321@gmail.com",
+        // "password": "Phong@123"
+        // }
+
+        console.log("ten: ", {
+          name: this.username,
+          email: this.email,
+          password: this.password,
+        });
+
+        //         {
+
+        // }
+
+        if (result.error) {
+          console.log("error  ", result.error.message);
           this.$q.notify({
-            icon: "done",
-            color: "positive",
-            message: "Authorization",
+            message: result.error.message,
+            type: "negative",
+            timeout: 1000000,
           });
+        } else {
+          // console.log("result-> ", this.data);
+          this.$router.push({ name: "Login" });
         }
+      } catch (error) {
+        console.log("system error-> ", error);
+      }
+
+      if (!this.$refs.email.hasError && !this.$refs.password.hasError) {
+        this.$q.notify({
+          icon: "done",
+          color: "positive",
+          message: "Authorization",
+        });
+      }
     },
     navLogin() {
       this.$router.push({ name: "Login" });

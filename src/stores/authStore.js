@@ -1,64 +1,58 @@
 import { defineStore } from "pinia";
 import { useStorage } from "vue3-storage";
-import { useMutation } from "villus";
+import { useMutation, useQuery } from "villus";
 
 // thêm vô page/auth/grapql
 import { mutatioLoginUserCms } from "../pages/auth/graphql/MutationLoginUserCms";
 
-// const LikePost = `mutation {
-//   createUser($email: String!, $password: String!) {
-//     email
-//   }
-// }`;
+const Login = `mutation Login($email: String!, $password: String!){
+  login(UserInput:{
+    email:$email,
+    password:$password
+    
+  }){
+    accessToken
+    refreshToken
+}
+}`;
 
-const newusser = `
-mutation createUser($email: String!, $password: String!) {
-  createUser(email: $email, password: $password) {
-    id
+const SignUp = `mutation createUser($name: String!, $email: String!, $password: String!) {
+  createUser(CreateUserInput: {
+    name: $name
+    email: $email
+    password: $password
+  }) {
+    name
     email
   }
-}
+}`;
 
-`;
-
-// const Login = `mutation login($email: String!, $password: String!) {
-//   result: login(email: $email, password: $password){
-//     statusCode
-//     message
-//     data {
-//       auth{
-//         accessToken
-//         refreshToken
-//         tokenType
-//       }
-//       user {
-//         id
-//         userName
-//       }
-//     }
-//     error
-//   }
-// }
-
-// `;
-
-const Login = `mutation login($email: String!, $password: String!) {
-  result: login(email: $email, password: $password){
-    userId
-    accessToken
+const CreateNote = `mutation createList($Content: String!, $Piority: Int!, $isComplete:Boolean!) {
+  createList(DtoCreate: {
+    Content: $Content
+    Piority: $Piority
+    isComplete: $isComplete
+  }) {
+    Content
+    Title
   }
 }`;
 
-const GetNote = `mutation getnote($userId: String!) {
-  result: getnote(userId: $userId){
-    Notes
-  }
-}`;
-
-const CreateNote = ` mutation createNote($content: String!, $accessToken: String!) {
-  createNote(content: $content) {
+const DeleteNote = `mutation deleteList($id: Int!) {
+  removeTodoList(id: $id) {
+    Content
+    Title
     id
-    content
+  }
+}`;
+
+const ToggleNote = `mutation updateList($isComplete: Bolean!, $id: Float!){
+  updateTodoList(updateTodoListInput:{
+    	isComplete: $isComplete
+    	id:$id
+  }){
+    id
+    isComplete
   }
 }`;
 
@@ -89,13 +83,12 @@ export const authStore = defineStore("authStore", {
     },
     getNotes(state) {
       // apply filter
-      console.log("array notes", state.notes);
       const noteNeed = state.notes.filter((note) => {
         var condition1 =
           state.filter.status == "All" ||
           note.isCompleted == state.filter.status;
 
-        var condition2 = note.text.includes(state.filter.search);
+        var condition2 = note.text?.includes(state.filter.search);
 
         var condition3 =
           !state.filter.priority[0] ||
@@ -157,19 +150,77 @@ export const authStore = defineStore("authStore", {
       });
       this.currentUser = { userName: "", accessToken: "", error: "logout" };
     },
+    SignUp() {
+      const { data, execute } = useMutation(SignUp);
+
+      return { data, execute };
+    },
     handleLoginApi() {
       // const { data, execute } = useMutation(mutatioLoginUserCms);
       const { data, execute } = useMutation(Login);
 
       return { data, execute };
     },
-    addNote(note) {
-      console.log("notes:", this.notes);
+
+    async getNoteDepart() {
+      const { data } = await useQuery({
+        query: `query FindByIdUser {
+          findByIdUser{
+            id
+            Content
+            Title
+            Piority
+            isComplete
+            user {
+              id
+            }
+          }
+        }`,
+      });
+      function check(x) {
+        switch (x) {
+          case 1:
+            return "Low";
+            break;
+          case 2:
+            return "Medium";
+            break;
+          case 3:
+            return "High";
+            break;
+
+          default:
+            return "Medium";
+        }
+      }
+      var x = data.value.findByIdUser.map((item) => ({
+        id: item.id,
+        text: item.Content,
+        priority: check(item.Piority),
+        isCompleted: item.isComplete,
+      }));
+
+      console.log("data return", x);
+      this.notes = x;
+      // return { data, execute };
+    },
+    addNoteToReload(note) {
       this.notes.push(note);
     },
-    removeNote(index) {
-      this.notes.splice(index, 1);
+
+    addNote() {
+      // console.log("notes:", this.notes);
+
+      const { data, execute } = useMutation(CreateNote);
+      return { data, execute };
     },
+
+    removeNote(index) {
+      // this.notes.splice(index, 1);
+      const { data, execute } = useMutation(DeleteNote);
+      return { data, execute };
+    },
+
     toggleNote(index) {
       this.notes[index].isCompleted = !this.notes[index].isCompleted;
     },
@@ -182,11 +233,11 @@ export const authStore = defineStore("authStore", {
 
       return { data, execute };
     },
-    fetchNotesApi() {
-      const { data, execute } = useMutation(GetNote);
+    // fetchNotesApi() {
+    //   const { data, execute } = useMutation(GetNote);
 
-      return { data, execute };
-    },
+    //   return { data, execute };
+    // },
 
     // for example only
 
@@ -212,12 +263,14 @@ export const authStore = defineStore("authStore", {
       const storage = useStorage();
       console.log("result", result);
       storage.setStorageSync("currentUser", {
-        userName: result.userId,
+        // userName: result.userId,
+        userName: "dinh son",
         accessToken: result.accessToken,
         error: "",
       });
       this.currentUser = {
-        userName: result.userId,
+        // userName: result.userId,
+        userName: "dinh son",
         accessToken: result.accessToken,
         error: "",
       };
