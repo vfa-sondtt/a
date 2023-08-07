@@ -43,14 +43,24 @@ mutation createUser($email: String!, $password: String!) {
 // `;
 
 const Login = `mutation login($email: String!, $password: String!) {
-  login(email: $email, password: $password){
+  result: login(email: $email, password: $password){
     userId
-    token
-    tokenExpiration
+    accessToken
   }
-}
+}`;
 
-`;
+const GetNote = `mutation getnote($userId: String!) {
+  result: getnote(userId: $userId){
+    Notes
+  }
+}`;
+
+const CreateNote = ` mutation createNote($content: String!, $accessToken: String!) {
+  createNote(content: $content) {
+    id
+    content
+  }
+}`;
 
 export const authStore = defineStore("authStore", {
   state: () => ({
@@ -65,6 +75,7 @@ export const authStore = defineStore("authStore", {
 
   getters: {
     getCurrentUser(state) {
+      console.log(state.currentUser);
       if (state.currentUser.userName == "") {
         const storageLocal = useStorage();
         const storageCurentUser = storageLocal.getStorageSync("currentUser");
@@ -78,6 +89,7 @@ export const authStore = defineStore("authStore", {
     },
     getNotes(state) {
       // apply filter
+      console.log("array notes", state.notes);
       const noteNeed = state.notes.filter((note) => {
         var condition1 =
           state.filter.status == "All" ||
@@ -170,6 +182,11 @@ export const authStore = defineStore("authStore", {
 
       return { data, execute };
     },
+    fetchNotesApi() {
+      const { data, execute } = useMutation(GetNote);
+
+      return { data, execute };
+    },
 
     // for example only
 
@@ -189,22 +206,21 @@ export const authStore = defineStore("authStore", {
     //     error: '',
     //   };
     // },
+
     // for real backend
-    // setUserInfomation(userInfo: {
-    //   auth: { accessToken, refreshToken },
-    //   user: { id, userName },
-    // }) {
-    //   const storage = useStorage();
-    //   storage.setStorageSync("currentUser", {
-    //     userName: userInfo.user.userName,
-    //     accessToken: userInfo.auth.accessToken,
-    //     error: "",
-    //   });
-    //   this.currentUser = {
-    //     userName: userInfo.user.userName,
-    //     accessToken: userInfo.auth.accessToken,
-    //     error: "",
-    //   };
-    // },
+    setUserInfomation(result) {
+      const storage = useStorage();
+      console.log("result", result);
+      storage.setStorageSync("currentUser", {
+        userName: result.userId,
+        accessToken: result.accessToken,
+        error: "",
+      });
+      this.currentUser = {
+        userName: result.userId,
+        accessToken: result.accessToken,
+        error: "",
+      };
+    },
   },
 });

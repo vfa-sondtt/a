@@ -25,7 +25,7 @@
           v-model="email"
           type="email"
           lazy-rules
-          :rules="[this.required, this.isEmail, this.short]"
+          :rules="[this.required, this.isEmail]"
           label="Enter email address"
         >
           <template v-slot:prepend>
@@ -50,7 +50,48 @@
 </template>
 
 <script>
+import { ref } from "vue";
 export default {
+  // setup() {
+  //   const email = ref("");
+  //   const password = ref("");
+  //   const passwordFieldType = ref("password");
+  //   const btnLabel = ref("Login");
+  //   const visibility = ref(false);
+  //   const visibilityIcon = ref("visibility");
+
+  //   function required(val) {
+  //     return (val && val.length > 0) || "Require";
+  //   }
+  //   // handle Submit Login
+  //   function submit() {
+  //     this.$refs.email.validate();
+  //     if (1) {
+  //       this.$router.push({ name: "NewPass" });
+  //     }
+  //   }
+  //   function navLogin() {
+  //     this.$router.push({ name: "Login" });
+  //   }
+
+  //   function isEmail(val) {
+  //     const emailPattern =
+  //       /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
+  //     return emailPattern.test(val) || "Please enter a valid email";
+  //   }
+  //   return {
+  //     email,
+  //     password,
+  //     passwordFieldType,
+  //     btnLabel,
+  //     visibility,
+  //     visibilityIcon,
+  //     navLogin,
+  //     submit,
+  //     required,
+  //   };
+  // },
+
   data() {
     return {
       email: "",
@@ -79,6 +120,11 @@ export default {
       this.visibility = !this.visibility;
       this.passwordFieldType = this.visibility ? "text" : "password";
       this.visibilityIcon = this.visibility ? "visibility_off" : "visibility";
+    },
+    isEmail(val) {
+      const emailPattern =
+        /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
+      return emailPattern.test(val) || "Please enter a valid email";
     },
   },
 };

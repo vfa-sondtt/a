@@ -1,6 +1,7 @@
 <template>
+  <!-- btn navigation -->
   <q-fab
-    style="position: fixed; top: 30px; right: 20px"
+    id="navigate"
     color="amber"
     text-color="black"
     icon="menu"
@@ -20,55 +21,34 @@
     />
   </q-fab>
 
-  <div
-    style="
-      display: flex;
-      margin: auto;
-      padding: 25px;
-      border: 2px solid;
-      border-radius: 10px;
-      height: 595px;
-      width: 800px;
-      flex-direction: column;
-    "
-  >
-    <h1
-      style="font-size: 32px; font-weight: 700; line-height: 32px; margin: 10px"
-    >
-      Todo App with Vue
-    </h1>
+  <div class="container">
+    <h1 class="container_header">Todo App with Vue</h1>
 
-    <!-- component Search -->
-    <div style="display: flex; flex-direction: column">
-      <p style="margin: 0; margin-right: auto">Search</p>
-      <div style="display: flex; justify-content: flex-start">
+    <!-- component Flter -->
+    <!-- Search bar -->
+    <div class="container_search">
+      <p>Search</p>
+      <div>
         <q-input
           dense
           dark
           v-model="filter.search"
-          style="flex-grow: 1"
+          class="container_search-input"
           standout="bg-teal text-white"
           @keydown.enter.prevent=""
           label="Enter Search Text"
         />
-        <q-btn style="height: 40px">
+        <q-btn>
           <q-icon name="search" />
         </q-btn>
       </div>
     </div>
-    <!-- End component Search -->
 
-    <div style="display: flex; justify-content: space-around; margin-top: 10px">
+    <!-- Filter bar -->
+    <div class="container_filter">
       <!-- filter by status -->
-      <div
-        style="
-          display: flex;
-          flex-direction: column;
-          width: 240px;
-          justify-content: space-between;
-        "
-      >
-        <p style="margin: 0; margin-right: auto">Filter By Status</p>
+      <div class="container_filter_status">
+        <p>Filter By Status</p>
 
         <div>
           <q-radio
@@ -103,8 +83,8 @@
       </div>
 
       <!-- filter by Piority -->
-      <div style="display: flex; flex-direction: column; width: 335px">
-        <p style="margin: 0; margin-right: auto">Filter By Priority</p>
+      <div class="container_filter_piority">
+        <p>Filter By Priority</p>
 
         <div class="q-gutter-sm">
           <q-select
@@ -124,42 +104,28 @@
       </div>
     </div>
 
-    <!-- list task -->
-
-    <ul style="padding: 0; margin: 0; height: 300px; margin-top: 10px">
+    <!-- list note -->
+    <ul class="container_listnote">
+      <!-- note -->
       <div
-        style="
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          margin-top: 2px;
-        "
+        class="container_listnote_note"
         v-for="(todo, index) in notes"
         :key="index"
       >
-        <div
-          :class="todo.isCompleted ? 'completed' : ''"
-          style="
-            width: 100%;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            border: 1px solid white;
-            padding: 4px;
-            border-radius: 10px;
-          "
-        >
+        <!-- note container -->
+        <div :class="todo.isCompleted ? 'completed' : ''" class="note_content">
+          <!-- note text -->
           <q-checkbox dense color="teal" v-model="todo.isCompleted">
             <span>{{ todo.text }}</span>
           </q-checkbox>
+          <!-- note priority -->
           <q-chip
-            style="margin-left: auto; margin-right: 10px"
             v-if="model"
             dense
             square
             color="white"
             text-color="primary"
-            class="q-my-none q-ml-xs q-mr-none"
+            class="q-my-none q-ml-xs q-mr-none note_content-priority"
           >
             <q-avatar color="primary" text-color="white" :icon="model.icon" />
             {{ todo.priority }}
@@ -168,6 +134,8 @@
             </template>
           </q-chip>
         </div>
+
+        <!-- note btn delete -->
         <q-btn
           style="margin-left: 5px"
           color="red"
@@ -181,49 +149,14 @@
     </ul>
 
     <!-- toggle thì margin right = 10px biến mất -->
-    <!-- example toggle task -->
-    <div
-      style="
-        width: 100%;
-        height: auto;
-        display: flex;
-        align-items: center;
-        border: 1px solid white;
-        padding: 4px;
-        border-radius: 10px;
-        opacity: 0.5;
-        text-decoration: line-through;
-      "
-    >
-      <q-checkbox
-        v-model="isCheck"
-        @input="toggleCheckbox"
-        color="teal"
-        label="Name"
-      />
-      <q-chip
-        style="margin-left: auto"
-        v-if="model"
-        dense
-        square
-        color="white"
-        text-color="primary"
-        class="q-my-none q-ml-xs q-mr-none"
-      >
-        <q-avatar color="primary" text-color="white" :icon="model.icon" />
-        {{ model.label }}
-      </q-chip>
-      <q-btn push icon="delete" @click="removeTodo(index)"></q-btn>
-    </div>
 
-    <!-- iput new task -->
-    <div
-      style="display: flex; flex-direction: row; margin: 10px 0; height: 40px"
-    >
+    <!-- input conponent -->
+    <div class="container_input">
+      <!-- input -->
       <q-input
+        class="container_input_enter"
         dark
         dense
-        style="flex-grow: 1; height: 30px"
         standout="bg-teal text-white"
         v-model="newNoteText"
         @keydown.enter.prevent="addNote"
@@ -233,10 +166,10 @@
           <q-icon name="event" />
         </template>
       </q-input>
-      <!-- add -->
 
+      <!-- btn-priority&add -->
       <q-select
-        style="width: 130px"
+        class="container_input-btnPriority"
         dense=""
         dark
         filled
@@ -265,27 +198,158 @@
         </template>
       </q-select>
 
-      <q-btn @click="addNote" color="primary" style="width: 50px">Add</q-btn>
+      <!-- btn-Add -->
+      <q-btn @click="addNote" color="primary" class="container_input-btnAdd"
+        >Add</q-btn
+      >
     </div>
   </div>
 </template>
 
 <style>
+#navigate {
+  position: fixed;
+  top: 30px;
+  right: 20px;
+}
 .completed {
   opacity: 0.5;
   text-decoration: line-through;
 }
+
+.container {
+  display: flex;
+  margin: auto;
+  padding: 25px;
+  border: 2px solid;
+  border-radius: 10px;
+  height: 595px;
+  width: 800px;
+  flex-direction: column;
+}
+
+.container_header {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 32px;
+  margin: 10px;
+}
+
+.container_search {
+  display: flex;
+  flex-direction: column;
+}
+
+.container_search-input {
+  flex-grow: 1;
+}
+
+.container_search > p {
+  margin: 0;
+  margin-right: auto;
+}
+
+.container_search > div {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.container_search q-btn {
+  height: 40px;
+}
+
+.container_filter {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.container_filter_status {
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  justify-content: space-between;
+}
+.container_filter_status p {
+  margin: 0;
+  margin-right: auto;
+}
+
+.container_filter_piority {
+  display: flex;
+  flex-direction: column;
+  width: 335px;
+}
+.container_filter_piority p {
+  margin: 0;
+  margin-right: auto;
+}
+.container_listnote {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  height: 290px;
+  margin-top: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+}
+.container_listnote_note {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 2px;
+  width: 746px;
+}
+
+.container_listnote_note .note_content {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  border: 1px solid white;
+  padding: 4px;
+  border-radius: 10px;
+  width: 670px;
+}
+
+.note_content .note_content-priority {
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.container_input {
+  display: flex;
+  flex-direction: row;
+  margin: 10px 0;
+  height: 40px;
+}
+.container_input_enter {
+  flex-grow: 1;
+  height: 30px;
+}
+
+.container_input-btnPriority {
+  width: 130px;
+}
+
+.container_input-btnAdd {
+  width: 50px;
+}
 </style>
 
 <script>
-// import { QBtn } from "quasar";
-import { ref, watch, watchEffect, reactive } from "vue";
+import { ref, watch, reactive } from "vue";
 import { authStore } from "../stores/authStore";
 import { computed } from "vue";
+
+import router from "../router/index";
 
 export default {
   setup() {
     const notesStore = authStore();
+
+    const { execute, data } = notesStore.fetchNotesApi();
+    execute({ userId: notesStore.getCurrentUser.userId });
 
     const filter = reactive({
       search: "",
@@ -363,7 +427,12 @@ export default {
     }
     function toggleCheckbox() {}
 
-    function Logout() {}
+    const Logout = () => {
+      // this.$router.push({ name: "Login" });
+
+      // this.$router.push("/");
+      router.push({ name: "Login" });
+    };
 
     return {
       notes,
@@ -383,8 +452,3 @@ export default {
   },
 };
 </script>
-
-<!--   components: {
-    QBtn,
-  },
- -->

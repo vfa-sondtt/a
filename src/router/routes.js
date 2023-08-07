@@ -3,6 +3,7 @@ import Signup from "../pages/Signup.vue";
 import ForgotPass from "../pages/ForgotPass.vue";
 import NewPass from "../pages/NewPass.vue";
 import Note from "../pages/Note.vue";
+import NotFound from "../pages/NotFound.vue";
 
 const routes = [
   {
@@ -31,6 +32,10 @@ const routes = [
     path: "/signup",
     name: "Signup",
     component: Signup,
+  },
+  {
+    path: "/:catchAll(.*)", // Đặt đường dẫn cho route này là "*"
+    component: NotFound,
   },
 ];
 

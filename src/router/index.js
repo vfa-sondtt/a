@@ -25,7 +25,7 @@ function isUserLoggedIn() {
   // Đoạn mã này sẽ phụ thuộc vào cơ chế xác thực bạn sử dụng (Vuex, cookies, JWT, v.v.)
   // Trả về true nếu người dùng đã đăng nhập, false nếu chưa đăng nhập
   // Ví dụ:
-  return !!localStorage.getItem("accessToken"); // Giả sử token được lưu trong localStorage
+  return !!localStorage.getItem("pro_currentUser"); // Giả sử token được lưu trong localStorage
 }
 
 export default router;

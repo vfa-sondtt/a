@@ -98,9 +98,6 @@ export default {
   setup() {
     const store = authStore();
     const { execute, data } = store.handleLoginApi();
-
-    // const { execute, data } = store.create();
-
     return { execute, store, data };
   },
   methods: {
@@ -112,11 +109,6 @@ export default {
       this.$refs.email.validate();
       this.$refs.password.validate();
       console.log("run");
-
-      // localStorage.setItem("accessToken", this.email + this.password);
-      // this.$router.push({ name: "Note" });
-
-      // this.execute({ email: this.email, password: this.password });
 
       try {
         const result = await this.execute({
@@ -134,34 +126,17 @@ export default {
             timeout: 1000000,
           });
         } else {
-          console.log("result-> ", this.data.result.data);
-          this.store.setUserInfomation(this.data.result.data);
-          this.$router.push("/testcode");
+          console.log("result-> ", this.data.result);
+          this.store.setUserInfomation(this.data.result);
+
+          this.$router.push({ name: "Note" });
+
+          // this.$router.push("/");
         }
       } catch (error) {
-        this.loading = false;
+        // this.loading = false;
         console.log("system error-> ", error);
       }
-
-      // try {
-      //   // Gửi yêu cầu mutation với giá trị username và password từ input
-      //   await mutate({
-      //     variables: {
-      //       username: username.value,
-      //       password: password.value,
-      //     },
-      //   });
-      // } catch (error) {
-      //   console.error(error);
-      // }
-
-      //   if (!this.$refs.email.hasError && !this.$refs.password.hasError) {
-      //     this.$q.notify({
-      //       icon: "done",
-      //       color: "positive",
-      //       message: "Authorization",
-      //     });
-      //   }
     },
     switchVisibility() {
       this.visibility = !this.visibility;
@@ -190,17 +165,21 @@ export default {
         if (result.error) {
           console.log("error  ", result.error.message);
           this.$q.notify({
+            progress: true,
             message: result.error.message,
             type: "negative",
-            timeout: 1000000,
+            timeout: 1000,
           });
         } else {
-          console.log("result-> ", this.data.result.data);
-          this.store.setUserInfomation(this.data.result.data);
-          this.$router.push("/testcode");
+          console.log("result-> ", this.data);
+
+          // this.store.setUserInfomation(this.data.result.data);
+          this.$router.push({ name: "Note" });
+
+          // this.$router.push("/");
         }
       } catch (error) {
-        this.loading = false;
+        // this.loading = false;
         console.log("system error-> ", error);
       }
     },
