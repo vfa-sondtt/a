@@ -128,8 +128,9 @@ export default {
           });
         } else {
           console.log("result-> ", this.data.login);
+          // var x1 = this.store.accessToken
           this.store.setUserInfomation(this.data.login);
-
+          console.log("data user", this.store);
           this.$router.push({ name: "Note" });
         }
       } catch (error) {

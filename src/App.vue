@@ -7,17 +7,17 @@
 <script>
 import { defineComponent, watch } from "vue";
 import { authStore } from "./stores/authStore.js";
-import { useClient, defaultPlugins } from "villus";
+import { useClient, defaultPlugins, cache, fetch } from "villus";
 
 export default defineComponent({
   name: "App",
-  data() {
-    return { storeAuth: authStore() };
-  },
+  // data() {
+  //   return { storeAuth: authStore() };
+  // },
 
   setup() {
     // const storeAuth = storeAuth();
-    // const curentUser = this.storeAuth.getCurrentUser;
+    // const curentUser = storeAuth.getCurrentUser;
     // watch(storeAuth, () => {
     //   curentUser.accessToken = storeAuth.getCurrentUser?.accessToken;
     // });
@@ -34,6 +34,11 @@ export default defineComponent({
 
     const store = authStore();
     const curentUser = store.getCurrentUser;
+
+    watch(store, () => {
+      curentUser.accessToken = store.getCurrentUser?.accessToken;
+    });
+
     console.log("log1", "Bearer " + curentUser?.accessToken);
 
     function authPlugin({ afterQuery, opContext }) {
@@ -50,7 +55,7 @@ export default defineComponent({
 
     useClient({
       url: "http://localhost:3000/graphql", // your endpoint.
-      use: [authPlugin, ...defaultPlugins()],
+      use: [authPlugin, cache(), ...defaultPlugins()],
     });
   },
 });

@@ -35,6 +35,7 @@ const CreateNote = `mutation createList($Content: String!, $Piority: Int!, $isCo
   }) {
     Content
     Title
+    id   
   }
 }`;
 
@@ -46,7 +47,7 @@ const DeleteNote = `mutation deleteList($id: Int!) {
   }
 }`;
 
-const ToggleNote = `mutation updateList($isComplete: Bolean!, $id: Float!){
+const ToggleNote = `mutation updateList($isComplete: Boolean!, $id: Float!){
   updateTodoList(updateTodoListInput:{
     	isComplete: $isComplete
     	id:$id
@@ -176,6 +177,7 @@ export const authStore = defineStore("authStore", {
             }
           }
         }`,
+        cachePolicy: "network-only",
       });
       function check(x) {
         switch (x) {
@@ -201,38 +203,53 @@ export const authStore = defineStore("authStore", {
       }));
 
       console.log("data return", x);
-      this.notes = x;
+      this.notes = [];
+      this.notes.push(...x);
+      // this.notes = x;
       // return { data, execute };
     },
     addNoteToReload(note) {
       this.notes.push(note);
     },
+    emptyNote() {
+      this.notes = [];
+      this.notes.push(...[]);
+    },
 
     addNote() {
       // console.log("notes:", this.notes);
-
       const { data, execute } = useMutation(CreateNote);
       return { data, execute };
     },
 
-    removeNote(index) {
-      // this.notes.splice(index, 1);
+    removeNote() {
       const { data, execute } = useMutation(DeleteNote);
       return { data, execute };
     },
 
-    toggleNote(index) {
-      this.notes[index].isCompleted = !this.notes[index].isCompleted;
+    removeNote2(index) {
+      // this.notes.splice(index, 1);
+      var index_remove = this.notes.findIndex((x) => {
+        return x.id == index;
+      });
+      this.notes.splice(index_remove, 1);
+    },
+
+    toggleNote() {
+      // this.notes[index].isCompleted = !this.notes[index].isCompleted;
+
+      const { data, execute } = useMutation(ToggleNote);
+      return { data, execute };
     },
 
     handleFilter(value) {
       this.filter = value;
     },
-    create() {
-      const { data, execute } = useMutation(newusser);
+    // create() {
+    //   const { data, execute } = useMutation(newusser);
 
-      return { data, execute };
-    },
+    //   return { data, execute };
+    // },
     // fetchNotesApi() {
     //   const { data, execute } = useMutation(GetNote);
 

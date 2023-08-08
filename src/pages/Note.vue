@@ -69,9 +69,13 @@ import ListNote from "../components/ListNote.vue";
 import AddNote from "../components/AddNote.vue";
 
 import router from "../router/index";
-import { ref, onMounted } from "vue";
+import { onMounted, onUpdated, onBeforeMount } from "vue";
 
 export default {
+  // beforeCreate() {
+  //   authStore().getNoteDepart();
+  // },
+
   components: {
     Filter,
     ListNote,
@@ -80,10 +84,14 @@ export default {
 
   setup() {
     const notesStore = authStore();
-    onMounted(() => {
+    onBeforeMount(() => {
       console.log("hehe co vo ne");
       notesStore.getNoteDepart();
     });
+
+    // onUpdated(() => {
+    //   notesStore.getNoteDepart();
+    // });
 
     // const { execute, data } = notesStore.fetchNotesApi();
     // execute({ userId: notesStore.getCurrentUser.userId });

@@ -155,8 +155,15 @@ export default {
             //   timeout: 1000000,
             // });
           } else {
-            // store.addNoteToReload();
-            console.log("result-> ", reload.value);
+            console.log("result-> ", result.data.createList.id);
+            //
+            store.addNoteToReload({
+              id: result.data.createList.id,
+              text: newNoteText.value,
+              priority: newNotePriority.value.label,
+              isCompleted: false,
+            });
+            //
           }
         } catch (error) {
           console.log("system error-> ", error);
