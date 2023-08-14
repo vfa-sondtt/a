@@ -139,6 +139,10 @@ export default {
               return 1;
           }
         }
+        // <!-- new function -->
+        function a(b) {
+          console.log("hello", b);
+        }
 
         try {
           const result = await execute({
