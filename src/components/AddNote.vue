@@ -97,7 +97,6 @@ export default {
         icon: "map",
       },
       {
-        label: "Medium",
         value: "Medium",
         icon: "bluetooth",
       },
