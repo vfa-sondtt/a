@@ -3,14 +3,10 @@
   <ul class="container_listnote">
     <!-- note -->
     <div
-      class="container_listnote_note"
-      v-for="(todo, index) in notes"
-      :key="index"
-    >
-      <!-- note container -->
-      <div :class="todo.isCompleted ? 'completed' : ''" class="note_content">
-        <!-- note text -->
-        <!-- <q-checkbox dense color="teal" v-model="todo.isCompleted"> -->
+
+
+
+
 
         <q-checkbox
           dense
