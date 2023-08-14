@@ -144,6 +144,11 @@ export default {
           console.log("hello", b);
         }
 
+        // new function
+        function hello(hehe) {
+          console.log("ssss", hehe);
+        }
+
         try {
           const result = await execute({
             Content: newNoteText.value,
